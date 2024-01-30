@@ -1,72 +1,56 @@
 return {
-  -- You can disable default plugins as follows:
-  { "goolord/alpha-nvim", enabled = false },
-  { "max397574/better-escape.nvim", enabled = false },
-  -- You can also add new plugins here as well:
   { "lvimuser/lsp-inlayhints.nvim", config = true },
-  { "AstroNvim/astrotheme", commit = "7a52efdd9a5bd302445d284a424467f92e4b1d44" },
+  "cpea2506/one_monokai.nvim",
+  'EdenEast/nightfox.nvim',
   {
-    "karb94/neoscroll.nvim",
-    event = "BufRead",
+    "Pocco81/auto-save.nvim",
+    event = "TextChanged",
     config = function()
-      require("neoscroll").setup {
-        -- All these keys will be mapped to their corresponding default scrolling animation
-        mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "<C-y>", "<C-e>", "zt", "zz", "zb" },
-        hide_cursor = true, -- Hide cursor while scrolling
-        stop_eof = true, -- Stop at <EOF> when scrolling downwards
-        respect_scrolloff = false, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-        cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-        easing_function = nil, -- Default easing function
-        pre_hook = nil, -- Function to run before the scrolling animation starts
-        post_hook = nil, -- Function to run after the scrolling animation ends
-        performance_mode = false, -- Disable "Performance Mode" on all buffers.
+      require("auto-save").setup {
+        enabled = true, -- start auto-save when the plugin is loaded (i.e. when your package manager loads it)
+        execution_message = {
+            message = function() -- message to print on save
+                return ("AutoSave: saved at " .. vim.fn.strftime("%H:%M:%S"))
+            end,
+            dim = 0.18, -- dim the color of `message`
+            cleaning_interval = 1250, -- (milliseconds) automatically clean MsgArea after displaying `message`. See :h MsgArea
+        },
+        trigger_events = {"InsertLeave", "TextChanged"}, -- vim events that trigger auto-save. See :h events
+        -- function that determines whether to save the current buffer or not
+        -- return true: if buffer is ok to be saved
+        -- return false: if it's not ok to be saved
+        condition = function(buf)
+            local fn = vim.fn
+            local utils = require("auto-save.utils.data")
+            if
+                fn.getbufvar(buf, "&modifiable") == 1 and
+                utils.not_in(fn.getbufvar(buf, "&filetype"), {}) then
+                return true -- met condition(s), can save
+            end
+            return false -- can't save
+        end,
+        write_all_buffers = false, -- write all buffers when the current one meets `condition`
+        debounce_delay = 135, -- saves the file at most every `debounce_delay` milliseconds
+        callbacks = { -- functions to be executed at different intervals
+            enabling = nil, -- ran when enabling auto-save
+            disabling = nil, -- ran when disabling auto-save
+            before_asserting_save = nil, -- ran before checking `condition`
+            before_saving = nil, -- ran before doing the actual save
+            after_saving = nil -- ran after doing the actual save
+        }
+
       }
     end,
   },
   {
-    "folke/zen-mode.nvim",
-    cmd = { "ZenMode" },
-    opts = {
-      window = {
-        backdrop = 0.95, -- shade the backdrop of the Zen window. Set to 1 to keep the same as Normal
-        -- height and width can be:
-        -- * an absolute number of cells when > 1
-        -- * a percentage of the width / height of the editor when <= 1
-        -- * a function that returns the width or the height
-        width = 120, -- width of the Zen window
-        height = 1, -- height of the Zen window
-        -- by default, no options are changed for the Zen window
-        -- uncomment any of the options below, or add other vim.wo options you want to apply
-        options = {
-          -- signcolumn = "no", -- disable signcolumn
-          -- number = false, -- disable number column
-          -- relativenumber = false, -- disable relative numbers
-          -- cursorline = false, -- disable cursorline
-          -- cursorcolumn = false, -- disable cursor column
-          -- foldcolumn = "0", -- disable fold column
-          -- list = false, -- disable whitespace characters
-        },
-      },
-      plugins = {
-        -- disable some global vim options (vim.o...)
-        -- comment the lines to not apply the options
-        options = {
-          enabled = true,
-          ruler = false, -- disables the ruler text in the cmd line area
-          showcmd = false, -- disables the command in the last line of the screen
-        },
-        twilight = { enabled = true }, -- enable to start Twilight when zen mode opens
-        gitsigns = { enabled = false }, -- disables git signs
-        tmux = { enabled = false }, -- disables the tmux statusline
-        -- this will change the font size on kitty when in zen mode
-        -- to make this work, you need to set the following kitty options:
-        -- - allow_remote_control socket-only
-        -- - listen_on unix:/tmp/kitty
-        kitty = {
-          enabled = false,
-          font = "+4", -- font size increment
-        },
-      },
-    },
+    "ethanholz/nvim-lastplace",
+    event = "WinEnter",
+    config = function()
+      require("nvim-lastplace").setup {
+       lastplace_ignore_buftype = {"quickfix", "nofile", "help"},
+        lastplace_ignore_filetype = {"gitcommit", "gitrebase", "svn", "hgcommit"},
+        lastplace_open_folds = true
+      }
+    end,
   },
 }

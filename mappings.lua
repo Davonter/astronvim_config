@@ -10,10 +10,8 @@ return {
     ["<leader>bb"] = { "<cmd>tabnew<cr>", desc = "New tab" },
     ["<leader>bc"] = { "<cmd>BufferLinePickClose<cr>", desc = "Pick to close" },
     ["<leader>bj"] = { "<cmd>BufferLinePick<cr>", desc = "Pick to jump" },
-    ["<leader>bt"] = { "<cmd>BufferLineSortByTabs<cr>", desc = "Sort by tabs" },
 
-    -- Open file in browser
-    ["<space>r"] = { ":exe ':silent !firefox %'<cr>", desc = "Run Browser" },
+    ["<leader>fw"] = { function() require("telescope.builtin").live_grep { additional_args = function(args) return vim.list_extend(args, { "--hidden", "--no-ignore" }) end, } end, desc = "Find words in all files", },
     -- View treesitter highlight groups
     ["<space>k"] = { ":TSHighlightCapturesUnderCursor<cr>", desc = "View Highlight Group" },
     -- Easy splits
@@ -21,13 +19,10 @@ return {
     ["|"] = { "<cmd>vsplit<cr>", desc = "Vertical split" },
     -- Search highlight groups
     ["<space>sg"] = { "<cmd>Telescope highlights<cr>", desc = "Highlight groups" },
-    -- quick save
-    -- ["<C-s>"] = { ":w!<cr>", desc = "Save File" },  -- change description but the same command
-
-    ["<leader>z"] = { "<cmd>ZenMode<cr>", desc = "Zen Mode" },
+    ["<A-2>"] = { function () require("aerial").toggle() end, desc = "Symblos outline"},
+    ["<A-o>"] = { "<cmd>ClangdSwitchSourceHeader<cr>", desc = "switch header or source code" },
   },
-  t = {
-    -- setting a mapping to false will disable it
-    -- ["<esc>"] = false,
-  },
+  v = {
+    -- ["C-."] = { "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<cr>", desc = "comment visual select"}
+  }
 }
