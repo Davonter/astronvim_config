@@ -21,6 +21,7 @@ return {
     ["<space>sg"] = { "<cmd>Telescope highlights<cr>", desc = "Highlight groups" },
     ["<A-2>"] = { function () require("aerial").toggle() end, desc = "Symblos outline"},
     ["<A-o>"] = { "<cmd>ClangdSwitchSourceHeader<cr>", desc = "switch header or source code" },
+    ["gh"] = {"<cmd>lua vim.lsp.buf.hover()<cr>", desc = "show function signature"}
   },
   v = {
     -- ["C-."] = { "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<cr>", desc = "comment visual select"}
